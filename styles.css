@@ -1,0 +1,39 @@
+.axis {
+    font: 14px sans-serif;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#title {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+#description {
+    font-size: 26px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+#svg-container {
+    position: relative;
+}
+
+#tooltip {
+    background-color: black;
+    color: white;
+    position: absolute;
+    opacity: 0;
+    border-radius: 10%;
+    text-align: center;
+    padding: 10px
+}
+
+.cell:hover {
+    stroke: black;
+    stroke-width: 2;
+}
