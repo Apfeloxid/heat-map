@@ -16,11 +16,14 @@ main {
 #description {
     font-size: 26px;
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 15px;
 }
 
 #svg-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #tooltip {
@@ -33,7 +36,22 @@ main {
     padding: 10px
 }
 
+.cell {
+    stroke: white;
+    stroke-width: 1;
+}
+
 .cell:hover {
+    stroke: black;
+    stroke-width: 2;
+}
+
+
+#legend {
+    margin-top: 20px;
+}
+
+#legend-item {
     stroke: black;
     stroke-width: 2;
 }

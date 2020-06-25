@@ -1,9 +1,9 @@
 const heightOfDataPoint = 40;
-const widthOfDataPoint = 5;
-const h = 12 * (1 + heightOfDataPoint);
+const widthOfDataPoint = 6;
+const h = 12 * heightOfDataPoint;
 const paddingWidth = 100;
 const paddingHeight = 30;
-const legendSquareSize = 30;
+const legendSquareSize = 40;
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const colorScheme = ["rgb(49, 54, 149)", 
@@ -37,7 +37,7 @@ function showData(data) {
     let minYear = new Date(d3.min(years).getFullYear(), 0, 1);
     let maxYear = new Date(d3.max(years).getFullYear(), 0, 1);
 
-    let w = (maxYear.getFullYear() - minYear.getFullYear()) * (widthOfDataPoint + 1);
+    let w = (maxYear.getFullYear() - minYear.getFullYear()) * widthOfDataPoint;
 
     minYear.setFullYear(minYear.getFullYear());
     maxYear.setFullYear(maxYear.getFullYear() + 1);
@@ -51,8 +51,20 @@ function showData(data) {
                     .range([paddingHeight, h + paddingHeight]);
 
     let temperatures = dataPoints.map(el => el["variance"]);
-    let colorScale = d3.scaleQuantize()
-                    .domain([d3.min(temperatures) - 1, d3.max(temperatures) + 1])
+
+    let colorScaleDomain = [];
+    let minTemp = d3.min(temperatures);
+    let maxTemp = d3.max(temperatures);
+    let step = (maxTemp - minTemp) / (colorScheme.length);
+
+    for (let i = 1; i < colorScheme.length; i++) {
+        colorScaleDomain.push(minTemp + i * step);
+    }
+    
+
+
+    let colorScale = d3.scaleThreshold()
+                    .domain(colorScaleDomain)
                     .range(colorScheme);
 
     d3.select("#description").text(`${d3.min(years).getFullYear()}-${d3.max(years).getFullYear()}: base temperature ${baseTemperature}°C`);
@@ -107,15 +119,24 @@ function showData(data) {
         .call(yAxis);
 
 
-    const legend = d3.select("#svg-container").append("svg").attr("id", "legend").attr("height", 100).attr("width",500);
+    const legend = d3.select("#svg-container").append("svg").attr("id", "legend").attr("height", 200).attr("width",legendSquareSize * colorScheme.length);
 
     legend.selectAll("rect")
         .data(colorScheme)
         .enter()
         .append("rect")
+        .attr("id", "legend-item")
         .attr("height", legendSquareSize)
         .attr("width", legendSquareSize)
         .attr("y", 0)
         .attr("x", (d, i) => legendSquareSize * i)
         .style("fill", d => d);
+
+    let legendXScale = d3.scaleLinear().domain([minTemp, maxTemp]).range([0, colorScheme.length * legendSquareSize]);
+    let legendAxis = d3.axisBottom(legendXScale).tickValues(colorScale.domain()).tickFormat(d => (d + baseTemperature).toFixed(1));
+
+    legend.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + legendSquareSize + ")")
+        .call(legendAxis)
 }
